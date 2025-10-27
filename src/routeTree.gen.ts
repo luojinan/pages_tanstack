@@ -10,8 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DoubanDetailRouteImport } from './routes/douban/detail'
-import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
+import { Route as DoubanListRouteImport } from './routes/douban/list'
+import { Route as DemoTanstackQueryRouteImport } f./routes/douban/detail.$id.tsxstack-query'
+import { Route as DoubanDetailIdRouteImport } from './routes/douban/detail.$id'
+import { Route as DoubanApiListRouteImport } from './routes/douban/api.list'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
 import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api.tq-todos'
@@ -27,14 +29,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DoubanDetailRoute = DoubanDetailRouteImport.update({
-  id: '/douban/detail',
-  path: '/douban/detail',
+const DoubanListRoute = DoubanListRouteImport.update({
+  id: '/douban/list',
+  path: '/douban/list',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
   id: '/demo/tanstack-query',
   path: '/demo/tanstack-query',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DoubanDetailIdRoute = DoubanDetailIdRouteImport.update({
+  id: '/douban/detail/$id',
+  path: '/douban/detail/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DoubanApiListRoute = DoubanApiListRouteImport.update({
+  id: '/douban/api/list',
+  path: '/douban/api/list',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
@@ -86,12 +98,14 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/douban/detail': typeof DoubanDetailRoute
+  '/douban/list': typeof DoubanListRoute
   '/demo/api/external-articles': typeof DemoApiExternalArticlesRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/douban/api/list': typeof DoubanApiListRoute
+  '/douban/detail/$id': typeof DoubanDetailIdRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
@@ -100,12 +114,14 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/douban/detail': typeof DoubanDetailRoute
+  '/douban/list': typeof DoubanListRoute
   '/demo/api/external-articles': typeof DemoApiExternalArticlesRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/douban/api/list': typeof DoubanApiListRoute
+  '/douban/detail/$id': typeof DoubanDetailIdRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
@@ -115,12 +131,14 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/douban/detail': typeof DoubanDetailRoute
+  '/douban/list': typeof DoubanListRoute
   '/demo/api/external-articles': typeof DemoApiExternalArticlesRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/douban/api/list': typeof DoubanApiListRoute
+  '/douban/detail/$id': typeof DoubanDetailIdRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
@@ -131,12 +149,14 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/demo/tanstack-query'
-    | '/douban/detail'
+    | '/douban/list'
     | '/demo/api/external-articles'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/douban/api/list'
+    | '/douban/detail/$id'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
@@ -145,12 +165,14 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/demo/tanstack-query'
-    | '/douban/detail'
+    | '/douban/list'
     | '/demo/api/external-articles'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/douban/api/list'
+    | '/douban/detail/$id'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
@@ -159,12 +181,14 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/demo/tanstack-query'
-    | '/douban/detail'
+    | '/douban/list'
     | '/demo/api/external-articles'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/douban/api/list'
+    | '/douban/detail/$id'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
@@ -174,12 +198,14 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
-  DoubanDetailRoute: typeof DoubanDetailRoute
+  DoubanListRoute: typeof DoubanListRoute
   DemoApiExternalArticlesRoute: typeof DemoApiExternalArticlesRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoApiTqTodosRoute: typeof DemoApiTqTodosRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
   DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
+  DoubanApiListRoute: typeof DoubanApiListRoute
+  DoubanDetailIdRoute: typeof DoubanDetailIdRoute
   DemoStartSsrDataOnlyRoute: typeof DemoStartSsrDataOnlyRoute
   DemoStartSsrFullSsrRoute: typeof DemoStartSsrFullSsrRoute
   DemoStartSsrSpaModeRoute: typeof DemoStartSsrSpaModeRoute
@@ -195,11 +221,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/douban/detail': {
-      id: '/douban/detail'
-      path: '/douban/detail'
-      fullPath: '/douban/detail'
-      preLoaderRoute: typeof DoubanDetailRouteImport
+    '/douban/list': {
+      id: '/douban/list'
+      path: '/douban/list'
+      fullPath: '/douban/list'
+      preLoaderRoute: typeof DoubanListRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/tanstack-query': {
@@ -207,6 +233,20 @@ declare module '@tanstack/react-router' {
       path: '/demo/tanstack-query'
       fullPath: '/demo/tanstack-query'
       preLoaderRoute: typeof DemoTanstackQueryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/douban/detail/$id': {
+      id: '/douban/detail/$id'
+      path: '/douban/detail/$id'
+      fullPath: '/douban/detail/$id'
+      preLoaderRoute: typeof DoubanDetailIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/douban/api/list': {
+      id: '/douban/api/list'
+      path: '/douban/api/list'
+      fullPath: '/douban/api/list'
+      preLoaderRoute: typeof DoubanApiListRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/start/server-funcs': {
@@ -278,12 +318,14 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
-  DoubanDetailRoute: DoubanDetailRoute,
+  DoubanListRoute: DoubanListRoute,
   DemoApiExternalArticlesRoute: DemoApiExternalArticlesRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoApiTqTodosRoute: DemoApiTqTodosRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,
   DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,
+  DoubanApiListRoute: DoubanApiListRoute,
+  DoubanDetailIdRoute: DoubanDetailIdRoute,
   DemoStartSsrDataOnlyRoute: DemoStartSsrDataOnlyRoute,
   DemoStartSsrFullSsrRoute: DemoStartSsrFullSsrRoute,
   DemoStartSsrSpaModeRoute: DemoStartSsrSpaModeRoute,
