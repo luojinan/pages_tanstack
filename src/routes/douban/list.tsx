@@ -1,10 +1,24 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { getListData } from "./api.list";
 
 export const Route = createFileRoute("/douban/list")({
   component: RouteComponent,
-  loader: () => {
-    return fetch("/douban/api/list").then((res) => res.json());
-  },
+  loader: async () => fetchList(),
+});
+
+const fetchList = createServerFn({ method: "GET" }).handler(async () => {
+  try {
+    console.info("Fetching douban posts list...");
+    const data = await getListData();
+    return data as ExternalPostsResponse;
+  } catch (error) {
+    console.error("Failed to fetch list:", error);
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("Failed to fetch posts list");
+  }
 });
 
 interface ListItem {
@@ -47,7 +61,8 @@ function RouteComponent() {
             <strong className="text-gray-900">Source:</strong> {data?.sourceUrl}
           </p>
           <p className="text-sm text-gray-600">
-            <strong className="text-gray-900">Fetched:</strong> {data?.fetchedAt}
+            <strong className="text-gray-900">Fetched:</strong>{" "}
+            {data?.fetchedAt}
           </p>
           <p className="text-sm text-gray-600">
             <strong className="text-gray-900">Count:</strong> {data?.postCount}
@@ -55,49 +70,35 @@ function RouteComponent() {
         </div>
 
         {data?.posts.map((post) => (
-          <div
-            key={post.id}
-            className="mb-3 p-3 sm:p-4 bg-white border border-gray-200"
-          >
-            <h3 className="text-base font-semibold mb-2 text-gray-900">Post {post.id + 1}</h3>
-            <ul className="space-y-2">
-              {post.items.map((item) => (
-                <li
-                  key={item.id}
-                  className="p-2 border border-gray-100"
-                >
-                  {item.images.length > 0 && (
-                    <div className="mb-2">
-                      {item.images.map((img, idx) => (
-                        <img
-                          key={idx}
-                          src={img.src}
-                          alt={img.alt}
-                          className="max-w-full h-auto"
-                        />
-                      ))}
-                    </div>
-                  )}
-                  <div className="mb-2 text-sm text-gray-800">{item.textContent}</div>
-                  {item.links.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {item.links.map((link, idx) => (
-                        <a
-                          key={idx}
-                          href={link.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-gray-900 underline hover:no-underline"
-                        >
+          <ul key={post.id} className="space-y-2">
+            {post.items.map((item) => {
+              const match = item.links[0]?.href.match(
+                /\/douban\/detail\/(\d+)\.html/,
+              );
+              const id = match ? match[1] : "";
+
+              return (
+                <li key={item.id} className="block">
+                  <Link
+                    to="/douban/detail/$id"
+                    params={{ id }}
+                    className="block p-2 bg-white border border-gray-100 hover:border-gray-200 hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex flex-wrap gap-2 mb-1">
+                      {item.links.map((link) => (
+                        <span key={link.href} className="text-sm text-gray-900">
                           {link.text}
-                        </a>
+                        </span>
                       ))}
                     </div>
-                  )}
+                    <div className="text-right text-sm text-gray-500">
+                      {item.textContent}
+                    </div>
+                  </Link>
                 </li>
-              ))}
-            </ul>
-          </div>
+              );
+            })}
+          </ul>
         ))}
       </div>
     </div>

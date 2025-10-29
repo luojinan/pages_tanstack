@@ -171,6 +171,29 @@ function resolveSourceUrl(request: Request) {
   return parsedUrl.toString();
 }
 
+/**
+ * 获取列表数据（可复用的服务端函数）
+ * @param sourceUrl - 可选的源URL，默认使用 DEFAULT_SOURCE_URL
+ * @returns 文章列表数据
+ */
+export async function getListData(sourceUrl?: string) {
+  const candidateUrl = sourceUrl ?? DEFAULT_SOURCE_URL;
+
+  // 验证URL格式和允许的主机
+  let parsedUrl: URL;
+  try {
+    parsedUrl = new URL(candidateUrl);
+  } catch {
+    throw new Error("Invalid url parameter. Expecting an absolute URL.");
+  }
+
+  if (!ALLOWED_HOSTS.has(parsedUrl.host)) {
+    throw new Error("The requested host is not allowed.");
+  }
+
+  return await getPostPayload(parsedUrl.toString());
+}
+
 export const Route = createFileRoute("/douban/api/list")({
   server: {
     handlers: {

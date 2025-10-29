@@ -1,9 +1,35 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { getDetailData } from "./api.douban-detail";
 
 export const Route = createFileRoute("/douban/detail/$id")({
   component: RouteComponent,
+  loader: async ({ params: { id } }) =>
+    fetchDetail({
+      data: id,
+    }),
 });
+
+const fetchDetail = createServerFn({ method: 'POST' })
+  .inputValidator((id: string) => id)
+  .handler(async ({ data }) => {
+    try {
+      console.info(`Fetching post with id ${data}...`)
+      const post = await getDetailData(data)
+      return post as ExternalArticlesResponse
+    } catch (error) {
+      console.error('Failed to fetch detail:', error)
+      if (error instanceof Error) {
+        // 如果是404或其他错误，抛出notFound或错误
+        if (error.message.includes('not found') || error.message.includes('404')) {
+          throw notFound()
+        }
+        throw error
+      }
+      throw new Error('Failed to fetch post')
+    }
+  })
+
 
 interface ExternalArticle {
   id: number;
@@ -21,63 +47,30 @@ interface ExternalArticlesResponse {
 }
 
 function RouteComponent() {
-  const { data, isLoading, error } = useQuery<ExternalArticlesResponse>({
-    queryKey: ["external-articles"],
-    queryFn: () =>
-      fetch("/demo/api/external-articles").then((res) => res.json()),
-    retry: 1,
-  });
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-red-900 via-red-800 to-black p-4 text-white">
-        <div className="w-full max-w-4xl p-8 rounded-xl backdrop-blur-md bg-black/50 shadow-xl border-8 border-black/10">
-          <div className="text-center text-xl">Loading articles...</div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-red-900 via-red-800 to-black p-4 text-white">
-        <div className="w-full max-w-4xl p-8 rounded-xl backdrop-blur-md bg-black/50 shadow-xl border-8 border-black/10">
-          <div className="text-center text-red-500">
-            Error loading articles: {(error as Error).message}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const data = Route.useLoaderData();
 
   return (
-    <div
-      className="min-h-screen bg-gradient-to-br from-red-900 via-red-800 to-black p-4 text-white"
-      style={{
-        backgroundImage:
-          "radial-gradient(50% 50% at 80% 20%, #3B021F 0%, #7B1028 60%, #1A000A 100%)",
-      }}
-    >
-      <div className="max-w-6xl mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-6 text-center">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-4xl mx-auto p-3 sm:p-6">
+        <h1 className="text-xl sm:text-2xl font-bold mb-4 text-center text-gray-900">
           External Articles
         </h1>
-        <div className="mb-6 p-4 bg-white/10 rounded-lg backdrop-blur-sm">
-          <p>
-            <strong>Source URL:</strong> {data?.sourceUrl}
+        <div className="mb-4 p-3 bg-white border border-gray-200">
+          <p className="text-sm text-gray-600">
+            <strong className="text-gray-900">Source:</strong> {data?.sourceUrl}
           </p>
-          <p>
-            <strong>Fetched At:</strong> {data?.fetchedAt}
+          <p className="text-sm text-gray-600">
+            <strong className="text-gray-900">Fetched:</strong> {data?.fetchedAt}
           </p>
-          <p>
-            <strong>Article Count:</strong> {data?.articleCount}
+          <p className="text-sm text-gray-600">
+            <strong className="text-gray-900">Count:</strong> {data?.articleCount}
           </p>
         </div>
 
         {data?.articles.map((article) => (
           <div
             key={article.id}
-            className="mb-6 p-6 bg-white/10 rounded-xl backdrop-blur-sm border border-white/20 shadow-lg"
+            className="mb-6 p-6 bg-white border border-gray-200"
             dangerouslySetInnerHTML={{ __html: article.html }}
           />
         ))}

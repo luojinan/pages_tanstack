@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DoubanListRouteImport } from './routes/douban/list'
 import { Route as DoubanDetailIdRouteImport } from './routes/douban/detail.$id'
 import { Route as DoubanApiListRouteImport } from './routes/douban/api.list'
+import { Route as DoubanApiDoubanDetailRouteImport } from './routes/douban/api.douban-detail'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,16 +35,23 @@ const DoubanApiListRoute = DoubanApiListRouteImport.update({
   path: '/douban/api/list',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DoubanApiDoubanDetailRoute = DoubanApiDoubanDetailRouteImport.update({
+  id: '/douban/api/douban-detail',
+  path: '/douban/api/douban-detail',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/douban/list': typeof DoubanListRoute
+  '/douban/api/douban-detail': typeof DoubanApiDoubanDetailRoute
   '/douban/api/list': typeof DoubanApiListRoute
   '/douban/detail/$id': typeof DoubanDetailIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/douban/list': typeof DoubanListRoute
+  '/douban/api/douban-detail': typeof DoubanApiDoubanDetailRoute
   '/douban/api/list': typeof DoubanApiListRoute
   '/douban/detail/$id': typeof DoubanDetailIdRoute
 }
@@ -51,18 +59,30 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/douban/list': typeof DoubanListRoute
+  '/douban/api/douban-detail': typeof DoubanApiDoubanDetailRoute
   '/douban/api/list': typeof DoubanApiListRoute
   '/douban/detail/$id': typeof DoubanDetailIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/douban/list' | '/douban/api/list' | '/douban/detail/$id'
+  fullPaths:
+    | '/'
+    | '/douban/list'
+    | '/douban/api/douban-detail'
+    | '/douban/api/list'
+    | '/douban/detail/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/douban/list' | '/douban/api/list' | '/douban/detail/$id'
+  to:
+    | '/'
+    | '/douban/list'
+    | '/douban/api/douban-detail'
+    | '/douban/api/list'
+    | '/douban/detail/$id'
   id:
     | '__root__'
     | '/'
     | '/douban/list'
+    | '/douban/api/douban-detail'
     | '/douban/api/list'
     | '/douban/detail/$id'
   fileRoutesById: FileRoutesById
@@ -70,6 +90,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DoubanListRoute: typeof DoubanListRoute
+  DoubanApiDoubanDetailRoute: typeof DoubanApiDoubanDetailRoute
   DoubanApiListRoute: typeof DoubanApiListRoute
   DoubanDetailIdRoute: typeof DoubanDetailIdRoute
 }
@@ -104,12 +125,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DoubanApiListRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/douban/api/douban-detail': {
+      id: '/douban/api/douban-detail'
+      path: '/douban/api/douban-detail'
+      fullPath: '/douban/api/douban-detail'
+      preLoaderRoute: typeof DoubanApiDoubanDetailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DoubanListRoute: DoubanListRoute,
+  DoubanApiDoubanDetailRoute: DoubanApiDoubanDetailRoute,
   DoubanApiListRoute: DoubanApiListRoute,
   DoubanDetailIdRoute: DoubanDetailIdRoute,
 }
