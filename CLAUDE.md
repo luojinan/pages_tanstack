@@ -27,7 +27,7 @@ This is a **TanStack Start** application (v1.132.0) - a full-stack React framewo
 - **Tailwind CSS** (v4.0.6) - Styling
 - **Biome** (v2.2.4) - Linting and formatting
 - **Vitest** (v3.0.5) - Testing framework
-- **JSDOM** (v27.0.0) - HTML parsing for server-side data fetching
+- **Cheerio** (v1.0.0) - HTML parsing for server-side data fetching
 
 ### Directory Structure
 
@@ -69,7 +69,7 @@ src/
 
 The `/douban/api/list.ts` endpoint provides server-side HTML scraping:
 - Fetches and parses Douban posts from `new.xianbao.fun`
-- Uses JSDOM to parse HTML and extract post data
+- Uses Cheerio to parse HTML and extract post data
 - Supports query parameter `?url` for custom sources (must match allowed hosts)
 - Returns structured data with metadata
 

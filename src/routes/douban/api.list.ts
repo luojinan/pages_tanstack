@@ -38,111 +38,106 @@ async function getPostPayload(sourceUrl: string) {
 
   const html = await response.text();
 
-  const { JSDOM } = await import("jsdom");
-  const dom = new JSDOM(html);
-  const window = dom.window;
-  const document = window.document;
+  const cheerio = await import("cheerio");
+  const $ = cheerio.load(html);
 
   // Find all ul elements with class "new-post"
-  let newPostElements = Array.from(document.querySelectorAll("ul.new-post"));
+  let newPostElements = $("ul.new-post").toArray();
 
   // If no ul.new-post elements found, also try looking for potential parent containers
   // that might contain new post lists
   if (newPostElements.length === 0) {
     // Alternative selectors that might contain new posts in Douban context
     const alternativeSelectors = [
-      ".new-posts ul", // Elements with class new-posts containing ul
-      '[class*="new-post"] ul', // Elements containing new-post in class name containing ul
-      'ul[class*="new"]', // ul elements with classes containing "new"
+      ".new-posts ul",
+      '[class*="new-post"] ul',
+      'ul[class*="new"]',
     ];
 
     for (const selector of alternativeSelectors) {
-      const elements = Array.from(document.querySelectorAll(selector));
+      const elements = $(selector).toArray();
       if (elements.length > 0) {
-        // If alternative elements found, use the first set
-        const firstSet = elements as HTMLElement[];
-        const processedElements = firstSet.filter(
-          (ul) => ul.tagName.toLowerCase() === "ul",
+        const processedElements = elements.filter(
+          (ul) => $(ul).prop("tagName") === "UL",
         );
         if (processedElements.length > 0) {
           newPostElements = processedElements;
-          break; // Use the first alternative that has elements
+          break;
         }
       }
     }
   }
 
   const posts = newPostElements.map((ul, index) => {
-    // Create a clone to clean up content
-    const ulClone = ul.cloneNode(true) as HTMLElement;
+    const $ul = $(ul);
 
     // Remove script and style tags if any
-    ulClone.querySelectorAll("script,style").forEach((node) => {
-      node.remove();
-    });
+    $ul.find("script,style").remove();
 
     // Parse li elements from the ul
-    const liElements = Array.from(ulClone.querySelectorAll("li"));
+    const liElements = $ul.find("li").toArray();
     const items = liElements.map((li, liIndex) => {
+      const $li = $(li);
+
       // Remove script and style tags from li if any
-      li.querySelectorAll("script,style").forEach((node) => {
-        node.remove();
-      });
+      $li.find("script,style").remove();
 
       // Extract all links from the li element
-      const links = Array.from(li.querySelectorAll("a")).map((a) => ({
-        href:
-          a.getAttribute("href")?.replace("/douban-maizu", "/douban/detail") ||
-          "",
-        text: a.textContent?.trim() || "",
-      }));
+      const links = $li.find("a").toArray().map((a) => {
+        const $a = $(a);
+        return {
+          href:
+            $a.attr("href")?.replace("/douban-maizu", "/douban/detail") ||
+            "",
+          text: $a.text().trim(),
+        };
+      });
 
       // Extract all images from the li element
-      const images = Array.from(li.querySelectorAll("img")).map((img) => ({
-        src: img.getAttribute("src") || "",
-        alt: img.getAttribute("alt") || "",
-      }));
+      const images = $li.find("img").toArray().map((img) => {
+        const $img = $(img);
+        return {
+          src: $img.attr("src") || "",
+          alt: $img.attr("alt") || "",
+        };
+      });
 
       // Extract text content without links
-      const cloneLi = li.cloneNode(true) as HTMLElement;
-      cloneLi.querySelectorAll("a").forEach((a) => a.remove());
-      const textContent = cloneLi.textContent?.trim() || "";
+      const cloneLi = $li.clone();
+      cloneLi.find("a").remove();
+      const textContent = cloneLi.text().trim();
+
+      const attribs = $li.attr();
 
       return {
         id: liIndex,
-        attributes: Object.fromEntries(
-          Array.from((li as HTMLElement).attributes, (attr) => [
-            attr.name,
-            attr.value,
-          ]),
-        ),
+        attributes: attribs,
         textContent: textContent,
         links: links,
         images: images,
-        innerHTML: li.innerHTML.trim(),
+        innerHTML: $li.html()?.trim() || "",
       };
     });
 
+    const attribs = $ul.attr();
+    const childTags = Array.from(
+      new Set(
+        $ul
+          .find("*")
+          .toArray()
+          .map((node) => $(node).prop("tagName").toLowerCase()),
+      ),
+    );
+
     return {
       id: index,
-      attributes: Object.fromEntries(
-        Array.from(ulClone.attributes, (attr) => [attr.name, attr.value]),
-      ),
+      attributes: attribs,
       items: items,
-      textContent: ulClone.textContent?.trim() ?? "",
-      childTags: Array.from(
-        new Set(
-          Array.from(ulClone.querySelectorAll("*"), (node) =>
-            node.tagName.toLowerCase(),
-          ),
-        ),
-      ),
-      tagName: ulClone.tagName.toLowerCase(),
+      textContent: $ul.text().trim(),
+      childTags: childTags,
+      tagName: $ul.prop("tagName").toLowerCase(),
     };
   });
-
-  // Clean up JSDOM window to prevent memory leaks
-  window.close();
 
   return {
     sourceUrl,

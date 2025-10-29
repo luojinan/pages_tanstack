@@ -39,34 +39,33 @@ async function getArticlePayload(sourceUrl: string) {
 
   const html = await response.text();
 
-  const { JSDOM } = await import("jsdom");
-  const dom = new JSDOM(html);
-  const articles = Array.from(
-    dom.window.document.querySelectorAll("article"),
-  ).map((article, index) => {
-    const articleClone = article.cloneNode(true) as HTMLElement;
-    articleClone.querySelectorAll("script,style").forEach((node) => {
-      node.remove();
-    });
+  const cheerio = await import("cheerio");
+  const $ = cheerio.load(html);
+  const articles = $("article")
+    .toArray()
+    .map((article, index) => {
+      const $article = $(article);
 
-    return {
-      id: index,
-      attributes: Object.fromEntries(
-        Array.from(articleClone.attributes, (attr) => [attr.name, attr.value]),
-      ),
-      html: articleClone.innerHTML.trim(),
-      textContent: articleClone.textContent?.trim() ?? "",
-      childTags: Array.from(
+      $article.find("script,style").remove();
+
+      const attribs = $article.attr();
+      const childTags = Array.from(
         new Set(
-          Array.from(articleClone.querySelectorAll("*"), (node) =>
-            node.tagName.toLowerCase(),
-          ),
+          $article
+            .find("*")
+            .toArray()
+            .map((node) => $(node).prop("tagName").toLowerCase()),
         ),
-      ),
-    };
-  });
+      );
 
-  dom.window.close();
+      return {
+        id: index,
+        attributes: attribs,
+        html: $article.html()?.trim() || "",
+        textContent: $article.text().trim(),
+        childTags: childTags,
+      };
+    });
 
   return {
     sourceUrl,
