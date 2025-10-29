@@ -67,11 +67,37 @@ async function getArticlePayload(sourceUrl: string) {
       };
     });
 
+  let commentsList = null;
+
+  const copyrightDiv = $("div.art-copyright");
+  if (copyrightDiv.length > 0) {
+    const commentLink = copyrightDiv.find("a").attr("href");
+    if (commentLink) {
+      try {
+        const commentResponse = await fetch(commentLink, {
+          method: "GET",
+          headers: FORWARDED_HEADERS,
+        });
+        if (commentResponse.ok) {
+          const commentHtml = await commentResponse.text();
+          const commentCheerio = cheerio.load(commentHtml);
+          const commentsElement = commentCheerio("ul#comments");
+          if (commentsElement.length > 0) {
+            commentsList = commentsElement.html()?.trim() || "";
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch comments:", error);
+      }
+    }
+  }
+
   return {
     sourceUrl,
     fetchedAt: new Date().toISOString(),
     articleCount: articles.length,
     articles,
+    commentsList,
   };
 }
 

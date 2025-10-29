@@ -44,6 +44,7 @@ interface ExternalArticlesResponse {
   fetchedAt: string;
   articleCount: number;
   articles: ExternalArticle[];
+  commentsList?: string | null;
 }
 
 function RouteComponent() {
@@ -74,6 +75,13 @@ function RouteComponent() {
             dangerouslySetInnerHTML={{ __html: article.html }}
           />
         ))}
+
+        {data?.commentsList && (
+          <div className="mb-6 p-6 bg-white border border-gray-200">
+            <h2 className="text-lg font-bold mb-4 text-gray-900">评论</h2>
+            <div dangerouslySetInnerHTML={{ __html: data.commentsList }} />
+          </div>
+        )}
       </div>
     </div>
   );
