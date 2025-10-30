@@ -61,7 +61,7 @@ async function getPostPayload(sourceUrl: string) {
           (ul) => $(ul).prop("tagName") === "UL",
         );
         if (processedElements.length > 0) {
-          newPostElements = processedElements;
+          newPostElements = processedElements as typeof newPostElements;
           break;
         }
       }
@@ -107,11 +107,8 @@ async function getPostPayload(sourceUrl: string) {
       cloneLi.find("a").remove();
       const textContent = cloneLi.text().trim();
 
-      const attribs = $li.attr();
-
       return {
         id: liIndex,
-        attributes: attribs,
         textContent: textContent,
         links: links,
         images: images,
@@ -119,23 +116,11 @@ async function getPostPayload(sourceUrl: string) {
       };
     });
 
-    const attribs = $ul.attr();
-    const childTags = Array.from(
-      new Set(
-        $ul
-          .find("*")
-          .toArray()
-          .map((node) => $(node).prop("tagName").toLowerCase()),
-      ),
-    );
-
     return {
       id: index,
-      attributes: attribs,
       items: items,
       textContent: $ul.text().trim(),
-      childTags: childTags,
-      tagName: $ul.prop("tagName").toLowerCase(),
+      tagName: String($ul.prop("tagName") || "").toLowerCase(),
     };
   });
 

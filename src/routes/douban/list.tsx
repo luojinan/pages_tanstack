@@ -26,7 +26,6 @@ const fetchList = createServerFn({ method: "GET" }).handler(async () => {
 
 interface ListItem {
   id: number;
-  attributes: Record<string, string>;
   textContent: string;
   links: { href: string; text: string }[];
   images: { src: string; alt: string }[];
@@ -35,10 +34,8 @@ interface ListItem {
 
 interface ExternalPost {
   id: number;
-  attributes: Record<string, string>;
   items: ListItem[]; // Array of parsed li elements
   textContent: string;
-  childTags: string[];
   tagName: string;
 }
 
@@ -75,6 +72,7 @@ function RouteComponent() {
           <button
             onClick={() => setIsDrawerOpen(true)}
             className="btn btn-primary btn-sm"
+            type="button"
             aria-label="Open blacklist settings"
           >
             <Settings size={18} />
@@ -105,9 +103,9 @@ function RouteComponent() {
             <div className="mt-2">
               <p className="text-xs text-gray-500 mb-1">Filtering keywords:</p>
               <div className="flex flex-wrap gap-1">
-                {blacklist.map((entry, index) => (
+                {blacklist.map((entry) => (
                   <span
-                    key={index}
+                    key={entry.name}
                     className="inline-block px-2 py-1 bg-cyan-100 text-cyan-700 text-xs rounded"
                   >
                     {entry.name}

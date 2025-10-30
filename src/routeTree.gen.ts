@@ -14,6 +14,7 @@ import { Route as DoubanListRouteImport } from './routes/douban/list'
 import { Route as DoubanDetailIdRouteImport } from './routes/douban/detail.$id'
 import { Route as DoubanApiListRouteImport } from './routes/douban/api.list'
 import { Route as DoubanApiDoubanDetailRouteImport } from './routes/douban/api.douban-detail'
+import { Route as DoubanApiCommentsRouteImport } from './routes/douban/api.comments'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,10 +41,16 @@ const DoubanApiDoubanDetailRoute = DoubanApiDoubanDetailRouteImport.update({
   path: '/douban/api/douban-detail',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DoubanApiCommentsRoute = DoubanApiCommentsRouteImport.update({
+  id: '/douban/api/comments',
+  path: '/douban/api/comments',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/douban/list': typeof DoubanListRoute
+  '/douban/api/comments': typeof DoubanApiCommentsRoute
   '/douban/api/douban-detail': typeof DoubanApiDoubanDetailRoute
   '/douban/api/list': typeof DoubanApiListRoute
   '/douban/detail/$id': typeof DoubanDetailIdRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/douban/list': typeof DoubanListRoute
+  '/douban/api/comments': typeof DoubanApiCommentsRoute
   '/douban/api/douban-detail': typeof DoubanApiDoubanDetailRoute
   '/douban/api/list': typeof DoubanApiListRoute
   '/douban/detail/$id': typeof DoubanDetailIdRoute
@@ -59,6 +67,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/douban/list': typeof DoubanListRoute
+  '/douban/api/comments': typeof DoubanApiCommentsRoute
   '/douban/api/douban-detail': typeof DoubanApiDoubanDetailRoute
   '/douban/api/list': typeof DoubanApiListRoute
   '/douban/detail/$id': typeof DoubanDetailIdRoute
@@ -68,6 +77,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/douban/list'
+    | '/douban/api/comments'
     | '/douban/api/douban-detail'
     | '/douban/api/list'
     | '/douban/detail/$id'
@@ -75,6 +85,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/douban/list'
+    | '/douban/api/comments'
     | '/douban/api/douban-detail'
     | '/douban/api/list'
     | '/douban/detail/$id'
@@ -82,6 +93,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/douban/list'
+    | '/douban/api/comments'
     | '/douban/api/douban-detail'
     | '/douban/api/list'
     | '/douban/detail/$id'
@@ -90,6 +102,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DoubanListRoute: typeof DoubanListRoute
+  DoubanApiCommentsRoute: typeof DoubanApiCommentsRoute
   DoubanApiDoubanDetailRoute: typeof DoubanApiDoubanDetailRoute
   DoubanApiListRoute: typeof DoubanApiListRoute
   DoubanDetailIdRoute: typeof DoubanDetailIdRoute
@@ -132,12 +145,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DoubanApiDoubanDetailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/douban/api/comments': {
+      id: '/douban/api/comments'
+      path: '/douban/api/comments'
+      fullPath: '/douban/api/comments'
+      preLoaderRoute: typeof DoubanApiCommentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DoubanListRoute: DoubanListRoute,
+  DoubanApiCommentsRoute: DoubanApiCommentsRoute,
   DoubanApiDoubanDetailRoute: DoubanApiDoubanDetailRoute,
   DoubanApiListRoute: DoubanApiListRoute,
   DoubanDetailIdRoute: DoubanDetailIdRoute,
