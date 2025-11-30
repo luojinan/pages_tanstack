@@ -1,0 +1,31 @@
+{
+  "tab_size": 2,
+  "language_servers": ["biome", "!eslint", "..."],
+  // 针对language单独设置format 和 codeaction
+  // "code_actions_on_format": {
+  //   "source.fixAll.biome": true,
+  //   "source.organizeImports.biome": true
+  // },
+  // "formatter": [
+  //   { "code_action": "source.fixAll.biome" },
+  //   { "code_action": "source.organizeImports" }
+  // ],
+  "languages": {
+    "TypeScript": {
+      "formatter": { "language_server": { "name": "biome" } },
+      "prettier": { "allowed": false },
+      "code_actions_on_format": {
+        "source.fixAll.biome": true,
+        "source.organizeImports.biome": true
+      }
+    },
+    "TSX": {
+      "formatter": { "language_server": { "name": "biome" } },
+      "prettier": { "allowed": false },
+      "code_actions_on_format": {
+        "source.fixAll.biome": true,
+        "source.organizeImports.biome": true
+      }
+    }
+  }
+}

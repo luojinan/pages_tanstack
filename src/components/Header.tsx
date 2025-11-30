@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 
 import { useState } from 'react'
 import {
+  Bookmark,
   Home,
   Menu,
   SquareFunction,
@@ -71,6 +72,19 @@ export default function Header() {
           >
             <SquareFunction size={20} />
             <span className="font-medium">作业</span>
+          </Link>
+
+          <Link
+            to="/read-later"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+            activeProps={{
+              className:
+                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+            }}
+          >
+            <Bookmark size={20} />
+            <span className="font-medium">稍后阅读</span>
           </Link>
         </nav>
       </aside>
